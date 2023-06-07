@@ -1,0 +1,52 @@
+#!/bin/sh
+
+
+
+file=$(readlink -f "$1")
+dir=${file%/*}
+base="${file%.*}"
+ext="${file##*.}"
+
+cd "$dir" || exit 1
+
+echo "-------------------------"
+case "$ext" in
+	c) 
+        clang  -std=c11  -g -O2 -Wall -Wextra -pedantic "$file" -o "$base";;
+	hs)
+        ghc "$file" -o "$base";; 
+	rs)
+        rustc "$file" -o "$base";; 
+	cpp)
+        g++ -std=c++17 -g  -O2 -Wall -Wextra "$file" -o "$base" ;;
+	cs) 
+        mcs "$file" -o "$base" && mono "$base";;
+	rmd)
+        Rscript -e "rmarkdown::render('$file')";;
+	ml)
+        ocamlopt "$file" -o "$base" ;;
+	go)
+        go build  "$file" ;;
+	v) 
+        v "$file" -o "$base" ;;
+	py)
+        python3 "$file" ;;
+  zig)
+        zig run "$file";;
+  odin)
+        odin build "$file" -file  -out:"$base" && "$base";;
+  asm)
+        nasm  -f elf64 "$file" && ld -s -o "$base" "$base.o";;
+  nasm)
+        nasm  -f elf64 "$file" && ld -s -o "$base" "$base.o";;
+  yasm)
+        yasm  -f elf64 "$file" && ld -s -o "$base" "$base.o";;
+  adb) 
+        gcc -c "$file" && gnatbind -x "$base.ali" && gnatlink "$base.ali" ;;
+  fasm) 
+        fasm "$file";;
+  c3)
+        c3c compile "$file" -o  -O2 "$base" && "$base";;
+	*) 
+        sed -n '/^#!/s/^#!//p; q' "$file" | xargs -r -I % "$file" ;;
+esac

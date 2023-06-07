@@ -1,0 +1,30 @@
+#!/bin/sh
+PORT=$1
+file=$(readlink -f "$2")
+dir=${file%/*r}
+base=${file%.*}
+ext="${file##*.}"
+# check arg is empt or not
+# if [ -z "$1" ] 
+# cd "$dir" || exit 1
+
+# if [ $# -eq 2 ]
+# then
+# 	 killport $PORT; php -S localhost:$PORT -f $file & notify-send "localhost:$PORT"
+# else
+# 	 killport $PORT; php -S localhost:$PORT -f index.html & notify-send "localhost:$PORT"
+
+case "$ext" in
+	 html)
+			killport $PORT; php -S localhost:$PORT -f $file & notify-send "localhost:$PORT"
+			;;
+	 zim)
+			killport "$PORT"; kiwix-serve --port "$PORT" "$file" & notify-send "localhost:$PORT"
+			;;
+	 *)
+			killport $PORT; php -S localhost:$PORT -f index.html & notify-send "localhost:$PORT"
+			;;
+
+esac	 
+echo "localhost:$PORT" | copy
+# prompt "Open in Luakit?" "luakit localhost:$PORT"

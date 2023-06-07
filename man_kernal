@@ -1,0 +1,9 @@
+#!/bin/zsh
+# set -xe 
+
+
+
+# PAGE=$(ls | dmenu -l 20 -fn "mono-16"  |  cut -d "." -f 1)
+PAGE=$(apropos . | dmenu -l 20 -fn "mono-18" | cut -d " "  -f 1 | cut -d "(" -f1 )  
+echo $PAGE
+[[ $PAGE != "" ]] &&  st man $PAGE  || exit

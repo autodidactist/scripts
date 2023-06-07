@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# Execute godot.sh first 
+nvim --listen ~/.cache/nvim/godot.pipe .

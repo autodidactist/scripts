@@ -1,0 +1,4 @@
+#!/bin/sh
+
+PORT=$(lsof -t -i:$1)
+kill $PORT

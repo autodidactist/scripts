@@ -1,0 +1,18 @@
+#!/bin/bash
+
+cd $HOME/.local/bin/scripts
+
+FILE=$(ls  | dmenu  -l 20  -fn "mono-14" )
+
+
+
+# This Script Open the Script in  $DIR in nvim.
+
+#DIR=~/.local/bin
+#FILE=$(ls $DIR | dmenu -i -l 30  -p "Scripts:" -fn 'mono-14'  )
+##[ "$FILE"!="" ] && st -e nvim $DIR/$FILE
+
+if [[ $FILE != "" ]]
+then
+	alacritty -e nvim $FILE
+fi

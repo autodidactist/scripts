@@ -1,0 +1,9 @@
+#!/bin/sh
+CURRENT_VAL=awk -F 'Button4,' '{print $2}' ~/.imwheelrc
+NEW_VALUE=3
+
+
+sed -i "s/\($TARGET_KEY *Button4, *\).*/\1$NEW_VALUE/" ~/.imwheelrc # find the string Button4, and write new value.
+sed -i "s/\($TARGET_KEY *Button5, *\).*/\1$NEW_VALUE/" ~/.imwheelrc # find the string Button5, and write new value.
+
+imwheel -kill

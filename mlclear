@@ -1,0 +1,33 @@
+#!/bin/sh
+# Simple Script 1
+# case "$1" in
+# 		*.ml|*.hs)
+# 				file=$(readlink -f "$1")
+# 				dir=$(dirname "$file")
+# 				base="${file%.*}"
+# 				find "$dir" -maxdepth 1 -type f -regextype gnu-awk -regex "^$base\\.(o|cmx|cmi|hi)" -delete;;
+# esac
+
+# Lets make it complex
+file=$(readlink -f "$1")
+dir=${file%/*}
+base="${file%.*}"
+ext="${file##*.}"
+
+
+case "$ext" in
+
+   cpp)
+				rm *put.txt;;
+   py)
+				rm *put.txt;;
+   ml)
+				find "$dir" -maxdepth 1 -type f -regextype gnu-awk -regex "^$base\\.(o|cmx|cmi)" -delete;;
+	 hs)
+				find "$dir" -maxdepth 1 -type f -regextype gnu-awk -regex "^$base\\.(o|hi)" -delete;;
+	 d)
+				find "$dir" -maxdepth 1 -type f -regextype gnu-awk -regex "^$base\\.(o)" -delete;;
+esac
+
+
+#Even simpler script exist  --> clearAll

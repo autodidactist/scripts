@@ -1,0 +1,78 @@
+#!/bin/bash
+# set -xe
+#
+export PATH="/home/shahid/opt/zig-linux-x86_64-0.9.1:$PATH"
+export PATH="/home/shahid/opt/c3c-linux:$PATH"
+
+file=$(readlink -f "$1")
+dir=${file%/*}
+base="${file%.*}"
+ext="${file##*.}"
+
+cd "$dir" || exit 1
+
+function all_lang_script(){
+
+	case "$ext" in
+		# Try to keep these cases in alphabetical order.
+		[0-9]) preconv "$file" | refer -PS -e | groff -mandoc -T pdf > "$base".pdf ;;
+		c) cc  -std=c11   "$file" -o "$base" && "$base" ;;
+		lua) love .;;
+		fsx) fsharpc  --nologo    "$file" -o "$base"  && mono "$base";;
+		# c) tcc  -run "$file" ;;
+		# c) cc  -std=c11  -g -O2 -Wall -Wextra -pedantic "$file" -o "$base" && "$base" ;
+		lhs|hs) ghc "$file" -o "$base" && "$base";;
+		# lhs|hs) ghc "$file" && "$base" ;;
+		rs) rustc "$file" -o "$base" && "$base" ;;
+		cpp)
+				 if [  -e input.txt ] ; then
+						g++ -std=c++17 -g  -O2 -Wall -Wextra "$file" -o "$base" && "$base" <./input.txt 
+				 else
+						g++ -std=c++17 -g  -O2 -Wall -Wextra "$file" -o "$base" && "$base" ;
+				 fi
+						# rm "$base";
+				 ;;
+
+		cs) mcs "$file" -o "$base" && mono "$base";;
+		md) pandoc --pdf-engine=xelatex "$file"   -o "$base".pdf;;
+		bf) bf "$file";;
+		js) node "$file";;
+		rmd) Rscript -e "rmarkdown::render('$file')";;
+		# d) ldc2 "$file" &&  "$base" ;;
+		d) dmd  -O -of="$base" "$file" && "$base" ;;
+		ml)ocamlopt "$file" -o "$base" && "$base";;
+		go) go build  "$file" && "$base";;
+
+		h)
+			[ $base=="config" ] && (echo "aki1012" | sudo -S make install)  || exit;;
+
+		v) v "$file" -o "$base" && "$base" ;;
+		java) javac -d classes "$file" && java -cp classes "${1%.*}" ;;
+		# nim) nim --verbosity:0 --hints:off  c "$file" && "$base";;
+		nim) nim   --hints:off  c "$file" && "$base";;
+		m) octave "$file" ;;
+		py) python3 "$file" >> Output ;;
+		ex|exs)elixir "$file" ;;
+		sent) setsid -f sent "$file" 2>/dev/null ;;
+		tex) pdflatex --latex-engne=xelatex "$file" ;;
+		zig) zig run "$file";;
+		odin) odin build "$file" -file  -out:"$base" && "$base";;
+		asm) nasm  -f elf64 "$file" && ld -s -o "$base" "$base.o" && "$base";;
+		nasm) nasm  -f elf64 "$file" && ld -s -o "$base" "$base.o" && "$base";;
+		yasm) yasm  -f elf64 "$file" && ld -s -o "$base" "$base.o" && "$base";;
+		adb) gcc -c "$file" && gnatbind -x "$base.ali" && gnatlink "$base.ali" && "$base";;
+
+		*) sed -n '/^#!/s/^#!//p; q' "$file" | xargs -r -I % "$file" ;;
+	esac
+}
+
+
+if [[ -e "Makefile" ]]; then
+	make
+elif [[ -e "build.sh" ]]; then
+	./build.sh
+else
+	all_lang_script
+fi
+
+

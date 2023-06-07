@@ -1,0 +1,4 @@
+#!/bin/sh
+
+repo=$(echo "$1" | sed  's/https:\/\/github.com\// /g')
+curl -s https://api.github.com/repos/${repo} | jq '.size' | numfmt --to=iec --from-unit=1024
